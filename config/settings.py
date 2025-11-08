@@ -155,3 +155,20 @@ CACHES = {
             "LOCATION": "unique-snowflake",
         }
     }
+
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'  # Use the same timezone as Django
+
+# CELERY BEAT (SCHEDULER) SETTINGS
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'check-suspicious-ips-hourly': {
+        'task': 'ip_tracking.check_suspicious_ips',
+        'schedule': crontab(minute=0, hour='*'),
+    },
+}
